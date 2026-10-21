@@ -112,8 +112,13 @@ export function requireSelfUserId(req, res, next) {
 }
 
 export function getAdminCredentials() {
-  return {
-    username: 'admin',
-    password: 'Admin_Food_Waste',
-  };
+  const username = process.env.ADMIN_USERNAME || 'admin';
+  const password = process.env.ADMIN_PASSWORD;
+  
+  if (!password) {
+    console.error('WARNING: ADMIN_PASSWORD environment variable is not set. Admin login is disabled.');
+    return { username, password: null };
+  }
+  
+  return { username, password };
 }

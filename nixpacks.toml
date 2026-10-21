@@ -1,5 +1,10 @@
 [phases.setup]
-nixPkgs = ["nodejs"]
+# Pin to Node.js 22.23.4 (LTS) - patched for CVE-2026-111497 (Brotli RCE),
+# CVE-2026-105482/105483/106069 (TLS bypass, DNS truncation)
+nixPkgs = ["nodejs_22"]
 
 [phases.install]
 cmds = ["npm install --legacy-peer-deps"]
+
+[variables]
+NODE_VERSION = "22.23.4"

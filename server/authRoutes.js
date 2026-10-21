@@ -102,10 +102,14 @@ router.post('/login', async (req, res) => {
   }
 });
 
-// Admin login route (hardcoded credentials)
+// Admin login route (credentials from environment variables)
 router.post('/admin/login', async (req, res) => {
   const { username, password } = req.body;
   const { username: adminUsername, password: adminPassword } = getAdminCredentials();
+
+  if (!adminPassword) {
+    return res.status(503).json({ error: 'Admin login is not configured. Set ADMIN_PASSWORD in environment.' });
+  }
 
   if (!username || !password) {
     return res.status(400).json({ error: 'Username and password are required' });
