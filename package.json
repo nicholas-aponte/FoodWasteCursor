@@ -9,6 +9,7 @@
     "wait:api": "node scripts/wait-for-api.js",
     "dev:web:wait": "npm run wait:api && npm run dev:web",
     "build": "vite build",
+    "build:ios": "VITE_API_URL=https://foodwaste-production-23e1.up.railway.app vite build",
     "lint": "eslint .",
     "test": "vitest run",
     "test:watch": "vitest",
@@ -21,9 +22,19 @@
     "start": "npm run dev:all",
     "local-ip": "node scripts/get-local-ip.js",
     "update-version": "node scripts/update-version.js",
-    "git-push": "node scripts/git-push.js"
+    "git-push": "node scripts/git-push.js",
+    "cap:sync": "cap sync",
+    "cap:sync:ios": "cap sync ios",
+    "cap:open:ios": "cap open ios",
+    "ios:build": "npm run build:ios && npm run cap:sync:ios"
   },
   "dependencies": {
+    "@capacitor/app": "^6.0.0",
+    "@capacitor/browser": "^6.0.0",
+    "@capacitor/core": "^6.0.0",
+    "@capacitor/ios": "^6.0.0",
+    "@capacitor/splash-screen": "^6.0.0",
+    "@capacitor/status-bar": "^6.0.0",
     "@emotion/react": "^11.14.0",
     "@emotion/styled": "^11.14.0",
     "@mui/icons-material": "^6.4.7",
@@ -48,6 +59,7 @@
     "react-use-navigate": "^0.1.1"
   },
   "devDependencies": {
+    "@capacitor/cli": "^6.0.0",
     "@eslint/js": "^9.17.0",
     "@testing-library/dom": "^10.4.2",
     "@testing-library/jest-dom": "^6.9.1",
