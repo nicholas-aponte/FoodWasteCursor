@@ -24,19 +24,13 @@ dist-ssr
 *.sln
 *.sw?
 
-# Environment files
-# Commit .env for hosting (e.g., Railway). Keep local overrides ignored.
-!.env
-.env.local
-.env.development.local
-.env.test.local
-.env.production.local
+# Environment files - NEVER commit .env files with secrets
+.env
+.env.*
 !.env.example
-!server/.env
-server/.env.local
-server/.env.development.local
-server/.env.test.local
-server/.env.production.local
+server/.env
+server/.env.*
+!server/.env.example
 
 # Android (FoodHero)
 FoodHero/.gradle/
