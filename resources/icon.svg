@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="1024" height="1024" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg">
+  <!-- Food Hero app icon placeholder - replace with actual branding -->
+  <defs>
+    <linearGradient id="bgGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#f97316;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#ea580c;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  
+  <!-- Background -->
+  <rect width="1024" height="1024" rx="180" fill="url(#bgGradient)"/>
+  
+  <!-- Leaf/Hero symbol -->
+  <g transform="translate(512, 512)">
+    <!-- Main leaf shape -->
+    <path d="M-200 100 Q-200 -200, 100 -200 Q200 -200, 200 0 Q200 200, 0 250 Q-150 200, -200 100 Z" 
+          fill="#ffffff" opacity="0.95"/>
+    
+    <!-- Leaf vein -->
+    <path d="M0 -150 Q20 0, 0 200" 
+          stroke="#f97316" stroke-width="20" fill="none" stroke-linecap="round"/>
+    <path d="M0 -50 Q-60 0, -100 50" 
+          stroke="#f97316" stroke-width="12" fill="none" stroke-linecap="round"/>
+    <path d="M0 50 Q60 80, 100 100" 
+          stroke="#f97316" stroke-width="12" fill="none" stroke-linecap="round"/>
+  </g>
+  
+  <!-- "FH" text hint -->
+  <text x="512" y="750" font-family="Arial, sans-serif" font-size="120" font-weight="bold" 
+        fill="#ffffff" text-anchor="middle" opacity="0.9">FOOD HERO</text>
+</svg>

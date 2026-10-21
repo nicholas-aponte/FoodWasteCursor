@@ -1,0 +1,166 @@
+# Codemagic CI/CD configuration for Food Hero iOS app
+# Documentation: https://docs.codemagic.io/yaml-quick-start/building-a-native-ios-app/
+
+workflows:
+  ios-testflight:
+    name: iOS TestFlight Build
+    max_build_duration: 60
+    instance_type: mac_mini_m2
+    
+    environment:
+      groups:
+        - ios_credentials  # Contains APP_STORE_CONNECT_* and certificate secrets
+      node: 20
+      xcode: latest
+      cocoapods: default
+      vars:
+        BUNDLE_ID: "com.foodhero.app"
+        APP_NAME: "Food Hero"
+        XCODE_WORKSPACE: "ios/App/App.xcworkspace"
+        XCODE_SCHEME: "App"
+        # Production backend API URL - baked into the web build
+        VITE_API_URL: "https://foodwaste-production-23e1.up.railway.app"
+    
+    triggering:
+      events:
+        - push
+        - pull_request
+      branch_patterns:
+        - pattern: main
+          include: true
+        - pattern: release/*
+          include: true
+      cancel_previous_builds: true
+    
+    scripts:
+      # Install Node.js dependencies
+      - name: Install npm dependencies
+        script: |
+          npm ci
+      
+      # Build the web app with production API URL
+      - name: Build web app
+        script: |
+          npm run build:ios
+      
+      # Sync Capacitor iOS project
+      - name: Sync Capacitor iOS
+        script: |
+          npx cap sync ios
+      
+      # Set up code signing using Codemagic CLI tools
+      - name: Set up code signing
+        script: |
+          # Use Codemagic CLI tools for automatic code signing
+          keychain initialize
+          
+          # Fetch signing files from App Store Connect
+          app-store-connect fetch-signing-files "$BUNDLE_ID" \
+            --type IOS_APP_STORE \
+            --create
+          
+          # Set up keychain for Xcode
+          keychain add-certificates
+          
+          # Set up provisioning profiles
+          xcode-project use-profiles
+      
+      # Increment build number (uses Codemagic build number)
+      - name: Increment build number
+        script: |
+          cd ios/App
+          agvtool new-version -all $((${BUILD_NUMBER:-1}))
+      
+      # Build iOS app
+      - name: Build iOS app
+        script: |
+          cd ios/App
+          xcodebuild \
+            -workspace App.xcworkspace \
+            -scheme App \
+            -configuration Release \
+            -sdk iphoneos \
+            -archivePath $CM_BUILD_DIR/build/App.xcarchive \
+            archive \
+            CODE_SIGN_IDENTITY="" \
+            CODE_SIGNING_REQUIRED=NO \
+            CODE_SIGNING_ALLOWED=NO
+            
+          # Export with proper signing
+          xcodebuild \
+            -exportArchive \
+            -archivePath $CM_BUILD_DIR/build/App.xcarchive \
+            -exportPath $CM_BUILD_DIR/build/ipa \
+            -exportOptionsPlist $CM_BUILD_DIR/ios/App/ExportOptions.plist
+    
+    artifacts:
+      - build/ipa/*.ipa
+      - build/App.xcarchive
+      - ios/App/App.xcworkspace
+    
+    publishing:
+      app_store_connect:
+        # Use API key authentication (recommended for CI)
+        api_key: $APP_STORE_CONNECT_PRIVATE_KEY
+        key_id: $APP_STORE_CONNECT_KEY_IDENTIFIER
+        issuer_id: $APP_STORE_CONNECT_ISSUER_ID
+        
+        # Submit to TestFlight
+        submit_to_testflight: true
+        
+        # Beta review info (required for external testing)
+        beta_groups:
+          - "External Testers"
+        
+      email:
+        recipients:
+          - $CM_NOTIFICATION_EMAIL
+        notify:
+          success: true
+          failure: true
+
+  # Development build workflow (no TestFlight upload)
+  ios-dev:
+    name: iOS Development Build
+    max_build_duration: 30
+    instance_type: mac_mini_m2
+    
+    environment:
+      node: 20
+      xcode: latest
+      vars:
+        BUNDLE_ID: "com.foodhero.app"
+        VITE_API_URL: "https://foodwaste-production-23e1.up.railway.app"
+    
+    triggering:
+      events:
+        - pull_request
+      branch_patterns:
+        - pattern: "*"
+          include: true
+          source: false
+      cancel_previous_builds: true
+    
+    scripts:
+      - name: Install npm dependencies
+        script: npm ci
+      
+      - name: Build web app
+        script: npm run build:ios
+      
+      - name: Sync Capacitor iOS
+        script: npx cap sync ios
+      
+      - name: Build iOS (no signing)
+        script: |
+          cd ios/App
+          xcodebuild \
+            -workspace App.xcworkspace \
+            -scheme App \
+            -configuration Debug \
+            -sdk iphonesimulator \
+            -destination 'platform=iOS Simulator,name=iPhone 15' \
+            build
+    
+    artifacts:
+      - dist/**/*

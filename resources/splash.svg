@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="2732" height="2732" viewBox="0 0 2732 2732" xmlns="http://www.w3.org/2000/svg">
+  <!-- Food Hero splash screen - orange background with centered logo -->
+  
+  <!-- Background -->
+  <rect width="2732" height="2732" fill="#f97316"/>
+  
+  <!-- Centered logo area -->
+  <g transform="translate(1366, 1200)">
+    <!-- Leaf/Hero symbol -->
+    <path d="M-300 150 Q-300 -300, 150 -300 Q300 -300, 300 0 Q300 300, 0 375 Q-225 300, -300 150 Z" 
+          fill="#ffffff" opacity="0.95"/>
+    
+    <!-- Leaf vein -->
+    <path d="M0 -225 Q30 0, 0 300" 
+          stroke="#f97316" stroke-width="30" fill="none" stroke-linecap="round"/>
+    <path d="M0 -75 Q-90 0, -150 75" 
+          stroke="#f97316" stroke-width="18" fill="none" stroke-linecap="round"/>
+    <path d="M0 75 Q90 120, 150 150" 
+          stroke="#f97316" stroke-width="18" fill="none" stroke-linecap="round"/>
+  </g>
+  
+  <!-- App name -->
+  <text x="1366" y="1800" font-family="Arial, sans-serif" font-size="160" font-weight="bold" 
+        fill="#ffffff" text-anchor="middle">Food Hero</text>
+</svg>
